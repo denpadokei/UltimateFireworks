@@ -10,16 +10,18 @@ using Zenject;
 
 namespace UltimateFireworks.HarmonyPatches
 {
-    [HarmonyPatch(typeof(MemoryPool<FireworkItemController>), nameof(MemoryPool<FireworkItemController>.Spawn))]
+    [HarmonyPatch(typeof(MemoryPool<object>), nameof(MemoryPool<object>.Spawn))]
     public class FireworksItemControllerOverride
     {
-        internal static void Postfix(ref FireworkItemController __result)
+        internal static void Postfix(ref object __result)
         {
-            __result.GetField<AudioSource, FireworkItemController>("_audioSource").bypassReverbZones = true;
-            __result.GetField<AudioSource, FireworkItemController>("_audioSource").minDistance = float.MaxValue;
-            __result.GetField<AudioSource, FireworkItemController>("_audioSource").volume = 1.0f;
-            __result.GetField<AudioSource, FireworkItemController>("_audioSource").reverbZoneMix = 1.1f;
-            __result.SetField("_numberOfParticles", 20000);
+            if (__result is FireworkItemController controller) {
+                controller.GetField<AudioSource, FireworkItemController>("_audioSource").bypassReverbZones = true;
+                controller.GetField<AudioSource, FireworkItemController>("_audioSource").minDistance = float.MaxValue;
+                controller.GetField<AudioSource, FireworkItemController>("_audioSource").volume = 1.0f;
+                controller.GetField<AudioSource, FireworkItemController>("_audioSource").reverbZoneMix = 1.1f;
+                controller.SetField("_numberOfParticles", 20000);
+            }
         }
     }
 }
