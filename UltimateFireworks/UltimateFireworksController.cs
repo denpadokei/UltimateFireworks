@@ -42,9 +42,10 @@ namespace UltimateFireworks
 
         public void Initialize()
         {
-            this._fireworksController.SetField("_spawnSize", this._fireworksController.GetField<Vector3, FireworksController>("_spawnSize") * 3f);
+            this._fireworksController.SetField("_spawnSize", this._fireworksController.GetField<Vector3, FireworksController>("_spawnSize") * 0.4f);
             this._fireworksController.SetField("_minSpawnInterval", 0.16f);
             this._fireworksController.SetField("_maxSpawnInterval", 0.2f);
+            this._fireworksController.transform.position = new Vector3(this._fireworksController.transform.position.x, 0f, 0f);
 #if DEBUG
             this._fireworksController.enabled = true;
             this.StartCoroutine(this._fireworksController.SpawningCoroutine());

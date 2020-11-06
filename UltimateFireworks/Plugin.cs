@@ -9,6 +9,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using IPALogger = IPA.Logging.Logger;
 using SiraUtil.Zenject;
+using HarmonyLib;
+using System.Reflection;
 
 namespace UltimateFireworks
 {
@@ -18,6 +20,9 @@ namespace UltimateFireworks
     {
         internal static Plugin Instance { get; private set; }
         internal static IPALogger Log { get; private set; }
+
+        internal static Harmony _harmony;
+        internal const string HARMONY_ID = "com.github.denpadokei.UltimateFireworks";
 
         [Init]
         /// <summary>
@@ -30,6 +35,7 @@ namespace UltimateFireworks
             Instance = this;
             Log = logger;
             Log.Info("UltimateFireworks initialized.");
+            _harmony = new Harmony(HARMONY_ID);
             zenjector.OnMenu<Installer.Installer>();
         }
 
@@ -49,8 +55,7 @@ namespace UltimateFireworks
         public void OnApplicationStart()
         {
             Log.Debug("OnApplicationStart");
-            new GameObject("UltimateFireworksController").AddComponent<UltimateFireworksController>();
-
+            ApplyHarmonyPatches();
         }
 
         [OnExit]
@@ -58,6 +63,16 @@ namespace UltimateFireworks
         {
             Log.Debug("OnApplicationQuit");
 
+        }
+
+        public static void ApplyHarmonyPatches()
+        {
+            try {
+                _harmony.PatchAll(Assembly.GetExecutingAssembly());
+            }
+            catch (Exception e) {
+                Log.Error(e);
+            }
         }
     }
 }
