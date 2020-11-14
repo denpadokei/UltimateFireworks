@@ -17,19 +17,28 @@ namespace UltimateFireworks.HarmonyPatches
         internal static void Postfix(ref object __result)
         {
             if (__result is FireworkItemController controller) {
-                var sparkColor = randomSparkColorPicker.PickRandomObject();
-                var lightColor = randomLightColorPicker.PickRandomObject();
-                controller.GetField<AudioSource, FireworkItemController>("_audioSource").bypassReverbZones = true;
-                controller.GetField<AudioSource, FireworkItemController>("_audioSource").minDistance = float.MaxValue;
-                controller.GetField<AudioSource, FireworkItemController>("_audioSource").volume = 1.0f;
-                controller.GetField<AudioSource, FireworkItemController>("_audioSource").reverbZoneMix = 1.1f;
-                controller.SetField("_numberOfParticles", 21000);
-                controller.SetField("_lightsColor", lightColor);
-                var main = controller.GetField<ParticleSystem, FireworkItemController>("_particleSystem").main;
-                var color = main.startColor;
-                color.color = sparkColor;
-                color.colorMax = sparkColor;
-                main.startColor = color;            }
+                try {
+                    var sparkColor = randomSparkColorPicker.PickRandomObject();
+                    var lightColor = randomLightColorPicker.PickRandomObject();
+                    controller.GetField<AudioSource, FireworkItemController>("_audioSource").bypassReverbZones = true;
+                    controller.GetField<AudioSource, FireworkItemController>("_audioSource").minDistance = float.MaxValue;
+                    controller.GetField<AudioSource, FireworkItemController>("_audioSource").volume = 1.0f;
+                    controller.GetField<AudioSource, FireworkItemController>("_audioSource").reverbZoneMix = 1.1f;
+                    controller.SetField("_numberOfParticles", 21000);
+                    controller.SetField("_lightsColor", lightColor);
+                    var particle = controller.GetField<ParticleSystem, FireworkItemController>("_particleSystem");
+                    var renderer = particle.GetComponent<Renderer>();
+                    var main = particle.main;
+                    var color = main.startColor;
+                    color.color = sparkColor;
+                    color.colorMax = sparkColor;
+                    main.startColor = color;
+                    renderer.sortingOrder = 3;
+                }
+                catch (Exception e) {
+                    Plugin.Log.Error(e);
+                }
+            }
         }
 
         static readonly Color[] lightColors = new Color[4]
