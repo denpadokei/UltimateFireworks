@@ -11,6 +11,8 @@ using IPALogger = IPA.Logging.Logger;
 using SiraUtil.Zenject;
 using HarmonyLib;
 using System.Reflection;
+using BeatSaberMarkupLanguage.Settings;
+using UltimateFireworks.Views;
 
 namespace UltimateFireworks
 {
@@ -30,39 +32,29 @@ namespace UltimateFireworks
         /// [Init] methods that use a Constructor or called before regular methods like InitWithConfig.
         /// Only use [Init] with one Constructor.
         /// </summary>
-        public void Init(IPALogger logger, Zenjector zenjector)
+        public void Init(IPALogger logger, Config conf, Zenjector zenjector)
         {
             Instance = this;
             Log = logger;
             Log.Info("UltimateFireworks initialized.");
+            Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
+            Log.Debug("Config loaded");
             _harmony = new Harmony(HARMONY_ID);
             zenjector.OnMenu<Installer.Installer>();
         }
-
-        #region BSIPA Config
-        //Uncomment to use BSIPA's config
-        /*
-        [Init]
-        public void InitWithConfig(Config conf)
-        {
-            Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
-            Log.Debug("Config loaded");
-        }
-        */
-        #endregion
 
         [OnStart]
         public void OnApplicationStart()
         {
             Log.Debug("OnApplicationStart");
             ApplyHarmonyPatches();
+            BSMLSettings.instance.AddSettingsMenu("UltimateFireworks", Setting.instance.ResourceName, Setting.instance);
         }
 
         [OnExit]
         public void OnApplicationQuit()
         {
             Log.Debug("OnApplicationQuit");
-
         }
 
         public static void ApplyHarmonyPatches()

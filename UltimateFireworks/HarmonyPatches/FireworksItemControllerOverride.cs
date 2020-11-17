@@ -14,6 +14,16 @@ namespace UltimateFireworks.HarmonyPatches
     [HarmonyPatch(typeof(MemoryPool<object>), nameof(MemoryPool<object>.Spawn))]
     public class FireworksItemControllerOverride
     {
+        private static Material _default;
+
+        private static Material Default
+        {
+            get
+            {
+                return _default ?? (_default = Resources.FindObjectsOfTypeAll<Material>().FirstOrDefault(x => x.name == "FireworkExplosion"));
+            }
+        }
+
         internal static void Postfix(ref object __result)
         {
             if (__result is FireworkItemController controller) {
@@ -24,15 +34,21 @@ namespace UltimateFireworks.HarmonyPatches
                     controller.GetField<AudioSource, FireworkItemController>("_audioSource").minDistance = float.MaxValue;
                     controller.GetField<AudioSource, FireworkItemController>("_audioSource").volume = 1.0f;
                     controller.GetField<AudioSource, FireworkItemController>("_audioSource").reverbZoneMix = 1.1f;
-                    controller.SetField("_numberOfParticles", 21000);
+                    controller.SetField("_numberOfParticles", 20000);
                     controller.SetField("_lightsColor", lightColor);
                     var particle = controller.GetField<ParticleSystem, FireworkItemController>("_particleSystem");
-                    var renderer = particle.GetComponent<Renderer>();
+                    var trail = particle.trails;
+                    trail.enabled = true;
+                    trail.lifetime = 2.0f;
+                    var renderer = particle.GetComponent<ParticleSystemRenderer>();
+                    renderer.renderMode = ParticleSystemRenderMode.None;
+                    renderer.trailMaterial = Default;
                     var main = particle.main;
                     var color = main.startColor;
                     color.color = sparkColor;
                     color.colorMax = sparkColor;
                     main.startColor = color;
+                    main.gravityModifierMultiplier = 2f;
                     renderer.sortingOrder = 3;
                 }
                 catch (Exception e) {

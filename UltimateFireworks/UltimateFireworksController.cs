@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UltimateFireworks.Configuration;
 using UnityEngine;
 using Zenject;
 
@@ -44,10 +45,12 @@ namespace UltimateFireworks
         {
             var spawnSize = this._fireworksController.GetField<Vector3, FireworksController>("_spawnSize") * 0.4f;
 
-            this._fireworksController.SetField("_spawnSize",  new Vector3(spawnSize.x, spawnSize.y, spawnSize.x / 1.5f));
+            this._fireworksController.SetField("_spawnSize",  new Vector3(spawnSize.x * 3f, spawnSize.y * 1.5f, spawnSize.x / 1.5f));
             this._fireworksController.SetField("_minSpawnInterval", 0.16f);
             this._fireworksController.SetField("_maxSpawnInterval", 0.2f);
-            this._fireworksController.transform.position = new Vector3(this._fireworksController.transform.position.x, spawnSize.y / 2f, 1f);
+            if (PluginConfig.Instance.Mode == PluginConfig.FireWorksMode.InSide) {
+                this._fireworksController.transform.position = new Vector3(this._fireworksController.transform.position.x, spawnSize.y / 2f, 1f);
+            }
 #if DEBUG
             this._fireworksController.enabled = true;
             this.StartCoroutine(this._fireworksController.SpawningCoroutine());
