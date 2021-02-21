@@ -52,7 +52,7 @@ namespace UltimateFireworks.HarmonyPatches
                 color.color = sparkColor;
                 color.colorMax = sparkColor;
                 main.startColor = color;
-                main.gravityModifierMultiplier = 2f;
+                main.gravityModifierMultiplier = 20f;
                 var light = particle.lights;
                 light.enabled = true;
                 light.ratio = 1f;
