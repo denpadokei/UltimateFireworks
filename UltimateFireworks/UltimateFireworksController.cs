@@ -40,21 +40,29 @@ namespace UltimateFireworks
         {
             Plugin.Log?.Debug($"{name}: OnDestroy()");
         }
-
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Slash)) {
+                this._fireworksController.enabled = !this._fireworksController.enabled;
+            }
+        }
         public void Initialize()
         {
             var spawnSize = this._fireworksController.GetField<Vector3, FireworksController>("_spawnSize") * 0.4f;
 
-            this._fireworksController.SetField("_spawnSize",  new Vector3(spawnSize.x * 3f, spawnSize.y * 1.5f, spawnSize.x / 1.5f));
-            this._fireworksController.SetField("_minSpawnInterval", 0.16f);
-            this._fireworksController.SetField("_maxSpawnInterval", 0.2f);
+            
             if (PluginConfig.Instance.Mode == PluginConfig.FireWorksMode.InSide) {
-                this._fireworksController.transform.position = new Vector3(this._fireworksController.transform.position.x, spawnSize.y / 2f, 1f);
+                this._fireworksController.SetField("_spawnSize", new Vector3(spawnSize.x * 3f, spawnSize.y * 1.5f, spawnSize.x / 1.5f));
+                this._fireworksController.SetField("_minSpawnInterval", 0.16f);
+                this._fireworksController.SetField("_maxSpawnInterval", 0.2f);
+                this._fireworksController.transform.position = new Vector3(this._fireworksController.transform.position.x, 20f, 30f);
             }
-#if DEBUG
-            this._fireworksController.enabled = true;
-            this.StartCoroutine(this._fireworksController.SpawningCoroutine());
-#endif
+            else {
+                this._fireworksController.SetField("_spawnSize", new Vector3(500f, 30f, 1f));
+                this._fireworksController.SetField("_minSpawnInterval", 0.16f);
+                this._fireworksController.SetField("_maxSpawnInterval", 0.2f);
+                this._fireworksController.transform.position = new Vector3(0f, 120f, 100f);
+            }
         }
         #endregion
     }
