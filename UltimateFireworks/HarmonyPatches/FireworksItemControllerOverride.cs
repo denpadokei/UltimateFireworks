@@ -33,9 +33,7 @@ namespace UltimateFireworks.HarmonyPatches
                 __instance.SetField("_lightFlashDuration", 8f);
                 var particle = __instance.GetField<ParticleSystem, FireworkItemController>("_particleSystem");
                 particle.transform.localScale = new Vector3(PluginConfig.Instance.Scale, PluginConfig.Instance.Scale, PluginConfig.Instance.Scale);
-                var trail = particle.trails;
-                trail.enabled = true;
-                trail.lifetime = new ParticleSystem.MinMaxCurve(3f, 15f);
+
                 var limit = particle.limitVelocityOverLifetime;
                 limit.enabled = true;
                 limit.dampen = 0.12f;
@@ -46,8 +44,21 @@ namespace UltimateFireworks.HarmonyPatches
                 limit.limitY = new ParticleSystem.MinMaxCurve(1f, 0f);
                 limit.limitZ = new ParticleSystem.MinMaxCurve(1f, 0f);
                 var renderer = particle.GetComponent<ParticleSystemRenderer>();
-                renderer.renderMode = ParticleSystemRenderMode.None;
-                renderer.trailMaterial = Default;
+                if (PluginConfig.Instance.FireEnable) {
+                    renderer.renderMode = ParticleSystemRenderMode.Billboard;
+                }
+                else {
+                    renderer.renderMode = ParticleSystemRenderMode.None;
+                }
+                var trail = particle.trails;
+                if (PluginConfig.Instance.TraileEnable) {
+                    trail.enabled = true;
+                    trail.lifetime = new ParticleSystem.MinMaxCurve(3f, 15f);
+                    renderer.trailMaterial = Default;
+                }
+                else {
+                    trail.enabled = false;
+                }
                 var main = particle.main;
                 var color = main.startColor;
                 color.color = sparkColor;
@@ -57,8 +68,13 @@ namespace UltimateFireworks.HarmonyPatches
                 main.simulationSpace = ParticleSystemSimulationSpace.Local;
                 main.scalingMode = ParticleSystemScalingMode.Local;
                 var colision = particle.collision;
-                colision.enabled = true;
-                colision.type = ParticleSystemCollisionType.World;
+                if (PluginConfig.Instance.Refrect) {
+                    colision.enabled = true;
+                    colision.type = ParticleSystemCollisionType.World;
+                }
+                else {
+                    colision.enabled = false;
+                }
                 var light = particle.lights;
                 light.enabled = true;
                 light.ratio = 1f;

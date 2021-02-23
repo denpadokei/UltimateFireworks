@@ -47,6 +47,24 @@ namespace UltimateFireworks.Views
             get => PluginConfig.Instance.GravityModifierMultiplier;
             set => PluginConfig.Instance.GravityModifierMultiplier = value;
         }
+        [UIValue("fire-enable")]
+        public bool Fire
+        {
+            get => PluginConfig.Instance.FireEnable;
+            set => PluginConfig.Instance.FireEnable = value;
+        }
+        [UIValue("traile-enable")]
+        public bool Traile
+        {
+            get => PluginConfig.Instance.TraileEnable;
+            set => PluginConfig.Instance.TraileEnable = value;
+        }
+        [UIValue("refrect-enable")]
+        public bool Refrect
+        {
+            get => PluginConfig.Instance.Refrect;
+            set => PluginConfig.Instance.Refrect = value;
+        }
 
         void Awake()
         {

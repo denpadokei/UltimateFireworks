@@ -8,10 +8,12 @@ namespace UltimateFireworks.Configuration
     internal class PluginConfig
     {
         public static PluginConfig Instance { get; set; }
+        public virtual bool FireEnable { get; set; } = false;
+        public virtual bool TraileEnable { get; set; } = true;
+        public virtual bool Refrect { get; set; } = true;
         public virtual FireWorksMode Mode { get; set; } = FireWorksMode.InSide;
         public virtual int Scale { get; set; } = 10;
         public virtual float GravityModifierMultiplier { get; set; } = 20f;
-
         public event Action<PluginConfig> ReloadEvent;
         public event Action<PluginConfig> ChangedEvent;
 
