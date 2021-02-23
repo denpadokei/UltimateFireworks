@@ -1,5 +1,7 @@
 ﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-  <vertical>
-    <dropdown-list-setting choices='modes' value='current-mode' bind-value='true' apply-on-change='false'></dropdown-list-setting>
-  </vertical>
+  <settings-container>
+    <dropdown-list-setting text='Spowne position' choices='modes' value='current-mode'></dropdown-list-setting>
+    <slider-setting text='Fireworks Scale' min='10' max='100' increment='1' integer-only='true' value='scale-value'></slider-setting>
+  <slider-setting text='Gravity Modifier Multiplier' min='1' max='100' increment='1' value='gravity-value'></slider-setting>
+  </settings-container>
 </bg>

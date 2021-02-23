@@ -33,6 +33,21 @@ namespace UltimateFireworks.Views
                 this.NotifyPropertyChanged();
             }
         }
+
+        [UIValue("scale-value")]
+        public int ScaleValue
+        {
+            get => PluginConfig.Instance.Scale;
+            set => PluginConfig.Instance.Scale = value;
+        }
+
+        [UIValue("gravity-value")]
+        public float GravityValue
+        {
+            get => PluginConfig.Instance.GravityModifierMultiplier;
+            set => PluginConfig.Instance.GravityModifierMultiplier = value;
+        }
+
         void Awake()
         {
             switch (PluginConfig.Instance.Mode) {

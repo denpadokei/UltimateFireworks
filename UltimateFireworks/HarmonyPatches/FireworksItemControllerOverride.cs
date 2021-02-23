@@ -2,6 +2,7 @@
 using IPA.Utilities;
 using System;
 using System.Linq;
+using UltimateFireworks.Configuration;
 using UnityEngine;
 
 namespace UltimateFireworks.HarmonyPatches
@@ -31,7 +32,7 @@ namespace UltimateFireworks.HarmonyPatches
                 __instance.SetField("_lightsColor", lightColor);
                 __instance.SetField("_lightFlashDuration", 8f);
                 var particle = __instance.GetField<ParticleSystem, FireworkItemController>("_particleSystem");
-                particle.transform.localScale = new Vector3(10f, 10f, 10f);
+                particle.transform.localScale = new Vector3(PluginConfig.Instance.Scale, PluginConfig.Instance.Scale, PluginConfig.Instance.Scale);
                 var trail = particle.trails;
                 trail.enabled = true;
                 trail.lifetime = new ParticleSystem.MinMaxCurve(3f, 15f);
@@ -52,7 +53,12 @@ namespace UltimateFireworks.HarmonyPatches
                 color.color = sparkColor;
                 color.colorMax = sparkColor;
                 main.startColor = color;
-                main.gravityModifierMultiplier = 20f;
+                main.gravityModifierMultiplier = PluginConfig.Instance.GravityModifierMultiplier;
+                main.simulationSpace = ParticleSystemSimulationSpace.Local;
+                main.scalingMode = ParticleSystemScalingMode.Local;
+                var colision = particle.collision;
+                colision.enabled = true;
+                colision.type = ParticleSystemCollisionType.World;
                 var light = particle.lights;
                 light.enabled = true;
                 light.ratio = 1f;

@@ -9,6 +9,8 @@ namespace UltimateFireworks.Configuration
     {
         public static PluginConfig Instance { get; set; }
         public virtual FireWorksMode Mode { get; set; } = FireWorksMode.InSide;
+        public virtual int Scale { get; set; } = 10;
+        public virtual float GravityModifierMultiplier { get; set; } = 20f;
 
         public event Action<PluginConfig> ReloadEvent;
         public event Action<PluginConfig> ChangedEvent;
