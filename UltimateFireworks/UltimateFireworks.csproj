@@ -137,6 +137,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HarmonyPatches\AnniversaryManagerPatche.cs" />
     <Compile Include="HarmonyPatches\FireworksItemControllerOverride.cs" />
     <Compile Include="Installer\Installer.cs" />
     <Compile Include="Plugin.cs" />

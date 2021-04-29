@@ -65,6 +65,12 @@ namespace UltimateFireworks.Views
             get => PluginConfig.Instance.Refrect;
             set => PluginConfig.Instance.Refrect = value;
         }
+        [UIValue("radial")]
+        public float Radial
+        {
+            get => PluginConfig.Instance.Radial;
+            set => PluginConfig.Instance.Radial = value;
+        }
 
         void Awake()
         {

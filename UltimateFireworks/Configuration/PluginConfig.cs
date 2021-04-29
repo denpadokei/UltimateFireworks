@@ -14,6 +14,7 @@ namespace UltimateFireworks.Configuration
         public virtual FireWorksMode Mode { get; set; } = FireWorksMode.InSide;
         public virtual int Scale { get; set; } = 10;
         public virtual float GravityModifierMultiplier { get; set; } = 20f;
+        public virtual float Radial { get; set; } = 0;
         public event Action<PluginConfig> ReloadEvent;
         public event Action<PluginConfig> ChangedEvent;
 

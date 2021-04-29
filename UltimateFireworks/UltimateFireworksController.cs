@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UltimateFireworks.Configuration;
 using UnityEngine;
+using UnityEngine.Audio;
 using Zenject;
 
 namespace UltimateFireworks
@@ -31,6 +32,7 @@ namespace UltimateFireworks
             // For this particular MonoBehaviour, we only want one instance to exist at any time, so store a reference to it in a static property
             //   and destroy any that are created while one already exists.
             Plugin.Log?.Debug($"{name}: Awake()");
+            
         }
 
         /// <summary>
@@ -58,13 +60,13 @@ namespace UltimateFireworks
             if (PluginConfig.Instance.Mode == PluginConfig.FireWorksMode.InSide) {
                 this._fireworksController.SetField("_spawnSize", new Vector3(spawnSize.x * 3f, spawnSize.y * 1.5f, spawnSize.x / 1.5f));
                 this._fireworksController.SetField("_minSpawnInterval", 0.16f);
-                this._fireworksController.SetField("_maxSpawnInterval", 0.2f);
+                this._fireworksController.SetField("_maxSpawnInterval", 0.5f);
                 this._fireworksController.transform.position = new Vector3(this._fireworksController.transform.position.x, 20f, 30f);
             }
             else {
                 this._fireworksController.SetField("_spawnSize", new Vector3(500f, 30f, 1f));
                 this._fireworksController.SetField("_minSpawnInterval", 0.16f);
-                this._fireworksController.SetField("_maxSpawnInterval", 0.2f);
+                this._fireworksController.SetField("_maxSpawnInterval", 0.5f);
                 this._fireworksController.transform.position = new Vector3(0f, 120f, 100f);
             }
         }
