@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UltimateFireworks.Configuration;
 using UnityEngine;
@@ -51,11 +52,18 @@ namespace UltimateFireworks
         public void Initialize()
         {
             var spawnSize = this._fireworksController.GetField<Vector3, FireworksController>("_spawnSize") * 0.4f;
-            var menu = Resources.FindObjectsOfTypeAll<GameObject>().FirstOrDefault(x => x.name == "MenuEnvironment");
-            var collider = menu.GetComponentsInChildren<Collider>().FirstOrDefault();
-            Plugin.Log.Debug($"{collider}, type {collider.GetType()}");
-            if (collider is BoxCollider box) {
-                box.size = new Vector3(720f, box.size.y, 800f);
+            //foreach (var item in Resources.FindObjectsOfTypeAll<GameObject>().Where(x => x.name.ToUpper().Contains("MENU"))) {
+            //    Plugin.Log.Debug($"{item} : {item.name}");
+            //}
+            var menumanager = Resources.FindObjectsOfTypeAll<MenuEnvironmentManager>().FirstOrDefault(x => x.name == "MenuEnvironmentManager");
+            if (menumanager != null) {
+                var menudata = menumanager.GetField<MenuEnvironmentManager.MenuEnvironmentObjects[], MenuEnvironmentManager>("_data");
+                var menu = menudata.FirstOrDefault(x => x.menuEnvironmentType == MenuEnvironmentManager.MenuEnvironmentType.Default).wrapper;
+                var collider = menu.GetComponentsInChildren<Collider>().FirstOrDefault();
+                Plugin.Log.Debug($"{collider}, type {collider.GetType()}");
+                if (collider is BoxCollider box) {
+                    box.size = new Vector3(720f, box.size.y, 800f);
+                }
             }
             if (PluginConfig.Instance.Mode == PluginConfig.FireWorksMode.InSide) {
                 this._fireworksController.SetField("_spawnSize", new Vector3(spawnSize.x * 3f, spawnSize.y * 1.5f, spawnSize.x / 1.5f));
