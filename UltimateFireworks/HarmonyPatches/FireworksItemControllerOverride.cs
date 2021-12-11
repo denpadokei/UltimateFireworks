@@ -20,16 +20,6 @@ namespace UltimateFireworks.HarmonyPatches
             }
         }
 
-        //internal static void Prefix(FireworkItemController __instance)
-        //{
-        //    var particles = __instance.GetField<FireworkItemController.FireworkItemParticleSystem[], FireworkItemController>("_particleSystems");
-        //    Plugin.Log.Debug($"length : {particles.Length}");
-        //    while (particles.Length < 3) {
-        //        particles = particles.Union(particles).ToArray();
-        //    }
-        //    __instance.SetField("_particleSystems", particles);
-        //}
-
         internal static void Postfix(FireworkItemController __instance)
         {
             try {
