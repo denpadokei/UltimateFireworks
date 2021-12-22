@@ -65,7 +65,7 @@ namespace UltimateFireworks
         [OnDisable]
         public void OnDisable()
         {
-            _harmony.UnpatchAll(HARMONY_ID);
+            _harmony.UnpatchSelf();
         }
 
         public static void ApplyHarmonyPatches()
