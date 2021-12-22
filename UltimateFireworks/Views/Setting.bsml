@@ -4,8 +4,8 @@
     <bool-setting text='Fire' value='fire-enable'></bool-setting>
     <bool-setting text='Traile' value='traile-enable'></bool-setting>
     <bool-setting text='Refret' value='refrect-enable'></bool-setting>
-    <slider-setting text='Fireworks Scale' min='5' max='100' increment='1' integer-only='true' value='scale-value'></slider-setting>
-    <slider-setting text='Gravity Modifier Multiplier' min='1' max='100' increment='1' value='gravity-value'></slider-setting>
+    <slider-setting text='Fireworks Scale' min='0' max='100' increment='1' integer-only='true' value='scale-value'></slider-setting>
+    <slider-setting text='Gravity Modifier Multiplier' min='-100' max='100' increment='1' value='gravity-value'></slider-setting>
     <slider-setting text ='Radial' min='0' max='150' increment='1' value='radial'></slider-setting>
   </settings-container>
 </bg>

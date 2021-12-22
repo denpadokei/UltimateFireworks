@@ -17,7 +17,7 @@ using UltimateFireworks.Views;
 namespace UltimateFireworks
 {
 
-    [Plugin(RuntimeOptions.SingleStartInit)]
+    [Plugin(RuntimeOptions.DynamicInit)]
     public class Plugin
     {
         internal static Plugin Instance { get; private set; }
@@ -40,14 +40,13 @@ namespace UltimateFireworks
             Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
             Log.Debug("Config loaded");
             _harmony = new Harmony(HARMONY_ID);
-            zenjector.OnMenu<Installer.Installer>();
+            zenjector.Install<Installer.Installer>(Location.Menu);
         }
 
         [OnStart]
         public void OnApplicationStart()
         {
             Log.Debug("OnApplicationStart");
-            ApplyHarmonyPatches();
             BSMLSettings.instance.AddSettingsMenu("UltimateFireworks", Setting.instance.ResourceName, Setting.instance);
         }
 
@@ -55,6 +54,18 @@ namespace UltimateFireworks
         public void OnApplicationQuit()
         {
             Log.Debug("OnApplicationQuit");
+        }
+
+        [OnEnable]
+        public void OnEnable()
+        {
+            ApplyHarmonyPatches();
+        }
+
+        [OnDisable]
+        public void OnDisable()
+        {
+            _harmony.UnpatchAll(HARMONY_ID);
         }
 
         public static void ApplyHarmonyPatches()
