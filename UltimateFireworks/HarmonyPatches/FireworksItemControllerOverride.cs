@@ -12,19 +12,15 @@ namespace UltimateFireworks.HarmonyPatches
     {
         private static Material _default;
 
-        private static Material Default
-        {
-            get
-            {
-                return _default ?? (_default = Resources.FindObjectsOfTypeAll<Material>().FirstOrDefault(x => x.name == "FireworkExplosion"));
-            }
-        }
+        private static Material Default => _default ?? (_default = Resources.FindObjectsOfTypeAll<Material>().FirstOrDefault(x => x.name == "FireworkExplosion"));
 
         internal static void Postfix(FireworkItemController __instance)
         {
             try {
-                var sparkColor = randomSparkColorPicker.PickRandomObject();
-                var lightColor = randomLightColorPicker.PickRandomObject();
+                var h = s_colorBaseValue * s_colorIndex.Next(0, s_colorCount);
+                var sparkColor = Color.HSVToRGB(h, 1, 1);
+                h = s_colorBaseValue * s_colorIndex.Next(0, s_colorCount);
+                var lightColor = Color.HSVToRGB(h, 1, 1);
                 __instance.GetField<AudioSource, FireworkItemController>("_audioSource").bypassReverbZones = true;
                 __instance.GetField<AudioSource, FireworkItemController>("_audioSource").minDistance = 200f;
                 __instance.GetField<AudioSource, FireworkItemController>("_audioSource").volume = 1.0f;
@@ -55,7 +51,7 @@ namespace UltimateFireworks.HarmonyPatches
                         var rateOverTime = emmistion.rateOverTime;
                         emmistion.rateOverTime = 3000f;
                     }
-                    
+
 
                     var renderer = particle.GetComponent<ParticleSystemRenderer>();
                     if (PluginConfig.Instance.FireEnable) {
@@ -87,7 +83,7 @@ namespace UltimateFireworks.HarmonyPatches
                     else {
                         orbital.enabled = false;
                     }
-                    
+
 
                     var main = particle.main;
                     var color = main.startColor;
@@ -107,7 +103,7 @@ namespace UltimateFireworks.HarmonyPatches
                     else {
                         colision.enabled = false;
                     }
-                    
+
                 }
             }
             catch (Exception e) {
@@ -115,32 +111,9 @@ namespace UltimateFireworks.HarmonyPatches
             }
         }
 
-        static readonly Color[] lightColors = new Color[4]
-        {
-            Color.white,
-            Color.red,
-            Color.green,
-            Color.blue
-        };
-
-        static readonly Color[] sparkColors = new Color[7]
-        {
-            new Color(0f, 0f, 1f, 1f),
-            new Color(0f, 1f, 0f, 1f),
-            new Color(1f, 0f, 0f, 1f),
-            new Color(1f, 1f, 1f, 1f),
-            new Color(0f, 0.753f, 1f, 1f),
-            new Color(0.753f, 1f, 0f, 1f),
-            new Color(1f, 0f, 753f, 1f)
-        };
-
-        static RandomObjectPicker<Color> randomSparkColorPicker;
-        static RandomObjectPicker<Color> randomLightColorPicker;
-
-        static FireworksItemControllerOverride()
-        {
-            randomSparkColorPicker = new RandomObjectPicker<Color>(sparkColors, 0.1f);
-            randomLightColorPicker = new RandomObjectPicker<Color>(lightColors, 0.1f);
-        }
+        private static readonly System.Random s_colorIndex = new System.Random(Environment.TickCount);
+        private static readonly Color s_baseColor = Color.red;
+        private static readonly float s_colorBaseValue = 1f / s_colorCount;
+        private const int s_colorCount = 180000;
     }
 }

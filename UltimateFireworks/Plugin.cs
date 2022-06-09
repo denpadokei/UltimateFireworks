@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BeatSaberMarkupLanguage.Settings;
+using HarmonyLib;
 using IPA;
 using IPA.Config;
 using IPA.Config.Stores;
-using UnityEngine.SceneManagement;
-using UnityEngine;
-using IPALogger = IPA.Logging.Logger;
 using SiraUtil.Zenject;
-using HarmonyLib;
+using System;
 using System.Reflection;
-using BeatSaberMarkupLanguage.Settings;
 using UltimateFireworks.Views;
+using IPALogger = IPA.Logging.Logger;
 
 namespace UltimateFireworks
 {
