@@ -1,15 +1,7 @@
 ﻿using IPA.Utilities;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using UltimateFireworks.Configuration;
 using UnityEngine;
-using UnityEngine.Audio;
 using Zenject;
 
 namespace UltimateFireworks
@@ -21,28 +13,10 @@ namespace UltimateFireworks
     public class UltimateFireworksController : MonoBehaviour, IInitializable
     {
         [Inject]
-        FireworksController _fireworksController;
+        private readonly FireworksController _fireworksController;
 
         // These methods are automatically called by Unity, you should remove any you aren't using.
         #region Monobehaviour Messages
-        /// <summary>
-        /// Only ever called once, mainly used to initialize variables.
-        /// </summary>
-        private void Awake()
-        {
-            // For this particular MonoBehaviour, we only want one instance to exist at any time, so store a reference to it in a static property
-            //   and destroy any that are created while one already exists.
-            Plugin.Log?.Debug($"{name}: Awake()");
-            
-        }
-
-        /// <summary>
-        /// Called when the script is being destroyed.
-        /// </summary>
-        private void OnDestroy()
-        {
-            Plugin.Log?.Debug($"{name}: OnDestroy()");
-        }
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Slash)) {
@@ -53,7 +27,7 @@ namespace UltimateFireworks
         {
             var spawnSize = this._fireworksController.GetField<Vector3, FireworksController>("_spawnSize") * 0.4f;
             var collider = Resources.FindObjectsOfTypeAll<Collider>().FirstOrDefault(x => x.name == "GroundCollider");
-            
+
             if (collider != null) {
                 if (collider is BoxCollider box) {
                     box.size = new Vector3(720f, box.size.y, 800f);

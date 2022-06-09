@@ -1,12 +1,7 @@
-﻿using System;
+﻿using BeatSaberMarkupLanguage.Attributes;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.ViewControllers;
 using UltimateFireworks.Configuration;
 
 namespace UltimateFireworks.Views
@@ -14,10 +9,10 @@ namespace UltimateFireworks.Views
     internal class Setting : PersistentSingleton<Setting>, INotifyPropertyChanged
     {
         // For this method of setting the ResourceName, this class must be the first class in the file.
-        public string ResourceName => string.Join(".", GetType().Namespace, GetType().Name);
+        public string ResourceName => string.Join(".", this.GetType().Namespace, this.GetType().Name);
 
         [UIValue("modes")]
-        List<object> _modes = new List<object>() { "InSide", "Normal" };
+        private readonly List<object> _modes = new List<object>() { "InSide", "Normal" };
 
         /// <summary>説明 を取得、設定</summary>
         private string currentMode_;
@@ -72,7 +67,7 @@ namespace UltimateFireworks.Views
             set => PluginConfig.Instance.Radial = value;
         }
 
-        void Awake()
+        private void Awake()
         {
             switch (PluginConfig.Instance.Mode) {
                 case PluginConfig.FireWorksMode.Normal:
@@ -88,12 +83,13 @@ namespace UltimateFireworks.Views
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        void NotifyPropertyChanged([CallerMemberName]string name = null)
+
+        private void NotifyPropertyChanged([CallerMemberName] string name = null)
         {
             this.OnPropertyChanged(new PropertyChangedEventArgs(name));
         }
 
-        void OnPropertyChanged(PropertyChangedEventArgs e)
+        private void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(this.CurrentMode)) {
                 if (this.CurrentMode == this._modes[0].ToString()) {
