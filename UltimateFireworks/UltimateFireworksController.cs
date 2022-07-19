@@ -1,6 +1,9 @@
 ﻿using IPA.Utilities;
+using SiraUtil.Affinity;
+using System.IO;
 using System.Linq;
 using UltimateFireworks.Configuration;
+using UltimateFireworks.Interfaces;
 using UnityEngine;
 using Zenject;
 
@@ -10,10 +13,12 @@ namespace UltimateFireworks
     /// Monobehaviours (scripts) are added to GameObjects.
     /// For a full list of Messages a Monobehaviour can receive from the game, see https://docs.unity3d.com/ScriptReference/MonoBehaviour.html.
     /// </summary>
-    public class UltimateFireworksController : MonoBehaviour, IInitializable
+    public class UltimateFireworksController : MonoBehaviour, IInitializable, IAffinity
     {
         [Inject]
         private readonly FireworksController _fireworksController;
+        [Inject]
+        private readonly ISoundLoader _soundLoader;
 
         // These methods are automatically called by Unity, you should remove any you aren't using.
         #region Monobehaviour Messages
@@ -47,5 +52,19 @@ namespace UltimateFireworks
             }
         }
         #endregion
+
+        [AffinityPatch(typeof(FireworkItemController), nameof(FireworkItemController.InitializeParticleSystem))]
+        [AffinityPrefix]
+        private void InitializeParticleSystem(FireworkItemController __instance, AudioClip[] ____explosionClips)
+        {
+            if (PluginConfig.Instance.SoundSet == "Default" || !this._soundLoader.Sounds.TryGetValue(Path.Combine(this._soundLoader.DataPath, PluginConfig.Instance.SoundSet), out var sounds)) {
+                return;
+            }
+            if (____explosionClips.SequenceEqual(sounds)) {
+                return;
+            }
+            __instance.SetField("_explosionClips", sounds);
+            __instance.SetField("_randomAudioPicker", new RandomObjectPicker<AudioClip>(sounds, 0.2f));
+        }
     }
 }

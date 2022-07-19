@@ -15,6 +15,7 @@ namespace UltimateFireworks.Configuration
         public virtual int Scale { get; set; } = 10;
         public virtual float GravityModifierMultiplier { get; set; } = 20f;
         public virtual float Radial { get; set; } = 0;
+        public virtual string SoundSet { get; set; } = "Default";
         public event Action<PluginConfig> ReloadEvent;
         public event Action<PluginConfig> ChangedEvent;
 

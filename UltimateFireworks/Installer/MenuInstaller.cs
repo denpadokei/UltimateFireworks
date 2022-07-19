@@ -2,7 +2,7 @@
 
 namespace UltimateFireworks.Installer
 {
-    public class Installer : MonoInstaller
+    public class MenuInstaller : MonoInstaller
     {
         public override void InstallBindings()
         {
