@@ -1,8 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- This file contains project properties used by the build. -->
 <Project>
-	<PropertyGroup>
-		<ImportBSMTTargets>True</ImportBSMTTargets>
-		<BSMTProjectType>BSIPA</BSMTProjectType>
-	</PropertyGroup>
+  <PropertyGroup>
+    <ImportBSMTTargets>True</ImportBSMTTargets>
+    <BSMTProjectType>BSIPA</BSMTProjectType>
+  </PropertyGroup>
+  <ItemGroup>
+    <OutputCopy Include="$(TargetPath)" OutputPath="Plugins\$(TargetName).dll" />
+    <OutputCopy Include="Sound\Kinni-kun\power.wav" OutputPath="UserData\UltimateFireworks\Sound\Kinni-kun\power.wav" />
+    <OutputCopy Include="Sound\Kinni-kun\ya.wav" OutputPath="UserData\UltimateFireworks\Sound\Kinni-kun\ya.wav" />
+  </ItemGroup>
 </Project>

@@ -35,7 +35,8 @@ namespace UltimateFireworks
             Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
             Log.Debug("Config loaded");
             _harmony = new Harmony(HARMONY_ID);
-            zenjector.Install<Installer.Installer>(Location.Menu);
+            zenjector.Install<Installer.MenuInstaller>(Location.Menu);
+            zenjector.Install<Installer.AppInstaller>(Location.App);
         }
 
         [OnStart]

@@ -7,5 +7,6 @@
     <slider-setting text='Fireworks Scale' min='0' max='100' increment='1' integer-only='true' value='scale-value'></slider-setting>
     <slider-setting text='Gravity Modifier Multiplier' min='-100' max='100' increment='1' value='gravity-value'></slider-setting>
     <slider-setting text ='Radial' min='0' max='150' increment='1' value='radial'></slider-setting>
+    <dropdown-list-setting id='sound-dropdown' choices='sounds' text='Sound set' value='sound-set'></dropdown-list-setting>
   </settings-container>
 </bg>

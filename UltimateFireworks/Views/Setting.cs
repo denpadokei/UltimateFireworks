@@ -1,8 +1,17 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
+using HMUI;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using UltimateFireworks.Configuration;
+using UltimateFireworks.Interfaces;
+using UnityEngine;
+using UnityEngine.UI;
+using Zenject;
 
 namespace UltimateFireworks.Views
 {
@@ -66,6 +75,22 @@ namespace UltimateFireworks.Views
             get => PluginConfig.Instance.Radial;
             set => PluginConfig.Instance.Radial = value;
         }
+        [UIValue("sound-set")]
+        public string SoundSet
+        {
+            get => PluginConfig.Instance.SoundSet;
+            set => PluginConfig.Instance.SoundSet = value;
+        }
+
+        [UIValue("sounds")]
+        public List<object> Sounds { get; set; } = new List<object>() { "Default", "Kinni-kun" };
+        private List<string> _sounds;
+
+        [UIComponent("sound-dropdown")]
+        private readonly object _dropDownObject;
+        private SimpleTextDropdown _simpleTextDropdown;
+        [Inject]
+        private readonly ISoundLoader _soundLoader;
 
         private void Awake()
         {
@@ -80,6 +105,56 @@ namespace UltimateFireworks.Views
                     this.CurrentMode = this._modes[0].ToString();
                     break;
             }
+        }
+
+        [UIAction("#post-parse")]
+        protected void PostParse()
+        {
+            this.StartCoroutine(this.CreateList());
+        }
+
+        private IEnumerator CreateList()
+        {
+            yield return new WaitWhile(() => this._soundLoader == null || this._soundLoader.IsLoading);
+            try {
+                var sounds = new List<string>
+                {
+                    "Default"
+                };
+                foreach (var item in this._soundLoader.Sounds) {
+                    sounds.Add(new DirectoryInfo(item.Key).Name);
+                }
+                if (this._dropDownObject is LayoutElement layout) {
+                    this._sounds = sounds.OrderBy(x => x).ToList();
+                    this._simpleTextDropdown = layout.GetComponentsInChildren<SimpleTextDropdown>(true).FirstOrDefault();
+                    this._simpleTextDropdown.SetTexts(this._sounds);
+                    this._simpleTextDropdown.ReloadData();
+                    this._simpleTextDropdown.didSelectCellWithIdxEvent += this.SimpleTextDropdown_didSelectCellWithIdxEvent;
+                    if (string.IsNullOrEmpty(PluginConfig.Instance.SoundSet)) {
+                        PluginConfig.Instance.SoundSet = this._sounds.FirstOrDefault() ?? "";
+                    }
+                    else if (this._sounds.Any(x => x == PluginConfig.Instance.SoundSet)) {
+                        this._simpleTextDropdown.SelectCellWithIdx(this._sounds.IndexOf(PluginConfig.Instance.SoundSet));
+                    }
+                    else {
+                        this._simpleTextDropdown.SelectCellWithIdx(0);
+                    }
+                }
+            }
+            catch (Exception e) {
+                Plugin.Log.Error(e);
+            }
+        }
+
+        private void SimpleTextDropdown_didSelectCellWithIdxEvent(DropdownWithTableView arg1, int arg2)
+        {
+            PluginConfig.Instance.SoundSet = this._sounds[arg2];
+        }
+
+        protected override void OnDestroy()
+        {
+            this._simpleTextDropdown.didSelectCellWithIdxEvent -= this.SimpleTextDropdown_didSelectCellWithIdxEvent;
+            base.OnDestroy();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
