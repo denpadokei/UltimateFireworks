@@ -1,4 +1,5 @@
-﻿using Zenject;
+﻿using UltimateFireworks.Views;
+using Zenject;
 
 namespace UltimateFireworks.Installer
 {
@@ -6,7 +7,8 @@ namespace UltimateFireworks.Installer
     {
         public override void InstallBindings()
         {
-            this.Container.BindInterfacesAndSelfTo<UltimateFireworksController>().FromNewComponentOnNewGameObject().AsSingle();
+            this.Container.BindInterfacesAndSelfTo<Setting>().FromNewComponentAsViewController().AsCached();
+            this.Container.BindInterfacesAndSelfTo<UltimateFireworksController>().FromNewComponentOnNewGameObject().AsCached();
         }
     }
 }

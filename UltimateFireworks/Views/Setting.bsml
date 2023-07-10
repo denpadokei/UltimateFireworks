@@ -1,12 +1,15 @@
 ﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-  <settings-container>
-    <dropdown-list-setting text='Spowne position' choices='modes' value='current-mode'></dropdown-list-setting>
-    <bool-setting text='Fire' value='fire-enable'></bool-setting>
-    <bool-setting text='Traile' value='traile-enable'></bool-setting>
-    <bool-setting text='Refret' value='refrect-enable'></bool-setting>
-    <slider-setting text='Fireworks Scale' min='0' max='100' increment='1' integer-only='true' value='scale-value'></slider-setting>
-    <slider-setting text='Gravity Modifier Multiplier' min='-100' max='100' increment='1' value='gravity-value'></slider-setting>
-    <slider-setting text ='Radial' min='0' max='150' increment='1' value='radial'></slider-setting>
-    <dropdown-list-setting id='sound-dropdown' choices='sounds' text='Sound set' value='sound-set'></dropdown-list-setting>
-  </settings-container>
+  <vertical vertical-fit='PreferredSize' horizontal-fit='PreferredSize'>
+    <button text='Preview' on-click='preview-action' ></button>
+    <settings-container preferred-height='70' preferred-width='200'>
+      <dropdown-list-setting text='Spowne position' choices='modes' value='current-mode' apply-on-change='true' bind-value='true' ></dropdown-list-setting>
+      <bool-setting text='Fire' value='fire-enable' apply-on-change='true' bind-value='true' ></bool-setting>
+      <bool-setting text='Traile' value='traile-enable' apply-on-change='true' bind-value='true' ></bool-setting>
+      <bool-setting text='Refret' value='refrect-enable' apply-on-change='true' bind-value='true' ></bool-setting>
+      <slider-setting text='Fireworks Scale' min='0' max='100' increment='1' integer-only='true' value='scale-value' apply-on-change='true' bind-value='true' ></slider-setting>
+      <slider-setting text='Gravity Modifier Multiplier' min='-100' max='100' increment='1' value='gravity-value' apply-on-change='true' bind-value='true' ></slider-setting>
+      <slider-setting text ='Radial' min='0' max='150' increment='1' value='radial' apply-on-change='true' bind-value='true' ></slider-setting>
+      <dropdown-list-setting id='sound-dropdown' choices='sounds' text='Sound set' value='sound-set' apply-on-change='true' bind-value='true' ></dropdown-list-setting>
+    </settings-container>
+  </vertical>
 </bg>

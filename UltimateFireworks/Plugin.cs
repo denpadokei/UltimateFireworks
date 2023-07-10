@@ -43,7 +43,7 @@ namespace UltimateFireworks
         public void OnApplicationStart()
         {
             Log.Debug("OnApplicationStart");
-            BSMLSettings.instance.AddSettingsMenu("UltimateFireworks", Setting.instance.ResourceName, Setting.instance);
+            
         }
 
         [OnExit]
