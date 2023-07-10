@@ -1,4 +1,6 @@
 ﻿using IPA.Config.Stores;
+using IPA.Config.Stores.Attributes;
+using IPA.Config.Stores.Converters;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -11,6 +13,7 @@ namespace UltimateFireworks.Configuration
         public virtual bool FireEnable { get; set; } = false;
         public virtual bool TraileEnable { get; set; } = true;
         public virtual bool Refrect { get; set; } = true;
+        [UseConverter(typeof(EnumConverter<FireWorksMode>))]
         public virtual FireWorksMode Mode { get; set; } = FireWorksMode.InSide;
         public virtual int Scale { get; set; } = 10;
         public virtual float GravityModifierMultiplier { get; set; } = 20f;

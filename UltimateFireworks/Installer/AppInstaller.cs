@@ -1,4 +1,5 @@
 ﻿using UltimateFireworks.Models;
+using Zenject;
 
 namespace UltimateFireworks.Installer
 {
@@ -6,7 +7,7 @@ namespace UltimateFireworks.Installer
     {
         public override void InstallBindings()
         {
-            this.Container.BindInterfacesAndSelfTo<SoundLoader>().AsSingle();
+            this.Container.BindInterfacesAndSelfTo<SoundLoader>().FromNewComponentOnNewGameObject().AsCached();
         }
     }
 }

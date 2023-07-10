@@ -10,6 +10,13 @@ namespace UltimateFireworks.HarmonyPatches
     [HarmonyPatch(typeof(FireworkItemController), nameof(FireworkItemController.InitializeParticleSystem))]
     public class FireworksItemControllerOverride
     {
+        public static float Scale { get; set; }
+        public static bool FireEnable { get; set; }
+        public static bool TraileEnable { get; set; }
+        public static float Radial { get; set; }
+        public static float GravityModifierMultiplier { get; set; }
+        public static bool Refrect { get; set; }
+
         private static Material _default;
 
         private static Material Default => _default ?? (_default = Resources.FindObjectsOfTypeAll<Material>().FirstOrDefault(x => x.name == "FireworkExplosion"));
@@ -34,7 +41,7 @@ namespace UltimateFireworks.HarmonyPatches
                         continue;
                     }
                     var particle = particleSystem._particleSystem;
-                    particle.transform.localScale = new Vector3(PluginConfig.Instance.Scale, PluginConfig.Instance.Scale, PluginConfig.Instance.Scale);
+                    particle.transform.localScale = new Vector3(Scale, Scale, Scale);
 
                     var limit = particle.limitVelocityOverLifetime;
                     limit.enabled = true;
@@ -54,14 +61,14 @@ namespace UltimateFireworks.HarmonyPatches
 
 
                     var renderer = particle.GetComponent<ParticleSystemRenderer>();
-                    if (PluginConfig.Instance.FireEnable) {
+                    if (FireEnable) {
                         renderer.renderMode = ParticleSystemRenderMode.Billboard;
                     }
                     else {
                         renderer.renderMode = ParticleSystemRenderMode.None;
                     }
                     var trail = particle.trails;
-                    if (PluginConfig.Instance.TraileEnable) {
+                    if (TraileEnable) {
                         trail.enabled = true;
                         trail.lifetime = new ParticleSystem.MinMaxCurve(0.1f, 2f);
                         renderer.trailMaterial = Default;
@@ -74,11 +81,11 @@ namespace UltimateFireworks.HarmonyPatches
                     rotationOverLifetime.separateAxes = true;
 
                     var orbital = particle.velocityOverLifetime;
-                    if (0 < PluginConfig.Instance.Radial) {
+                    if (0 < Radial) {
                         orbital.enabled = true;
                         orbital.space = ParticleSystemSimulationSpace.World;
                         orbital.orbitalY = 10f;
-                        orbital.radial = PluginConfig.Instance.Radial;
+                        orbital.radial = Radial;
                     }
                     else {
                         orbital.enabled = false;
@@ -90,13 +97,13 @@ namespace UltimateFireworks.HarmonyPatches
                     color.color = sparkColor;
                     color.colorMax = sparkColor;
                     main.startColor = color;
-                    main.gravityModifierMultiplier = PluginConfig.Instance.GravityModifierMultiplier;
+                    main.gravityModifierMultiplier = GravityModifierMultiplier;
                     main.simulationSpace = ParticleSystemSimulationSpace.Local;
                     main.scalingMode = ParticleSystemScalingMode.Local;
                     main.maxParticles = 850;
                     main.ringBufferMode = ParticleSystemRingBufferMode.Disabled;
                     var colision = particle.collision;
-                    if (PluginConfig.Instance.Refrect) {
+                    if (Refrect) {
                         colision.enabled = true;
                         colision.type = ParticleSystemCollisionType.World;
                     }

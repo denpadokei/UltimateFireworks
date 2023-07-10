@@ -1,4 +1,6 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Settings;
+using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
 using System;
 using System.Collections;
@@ -8,78 +10,114 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UltimateFireworks.Configuration;
+using UltimateFireworks.HarmonyPatches;
 using UltimateFireworks.Interfaces;
+using UltimateFireworks.Models;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
 namespace UltimateFireworks.Views
 {
-    internal class Setting : PersistentSingleton<Setting>, INotifyPropertyChanged
+    [HotReload]
+    internal class Setting : BSMLAutomaticViewController, IInitializable
     {
-        // For this method of setting the ResourceName, this class must be the first class in the file.
+        //ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*
+        #region // プロパティ
+        /// <summary>
+        /// For this method of setting the ResourceName, this class must be the first class in the file.
+        /// </summary>
         public string ResourceName => string.Join(".", this.GetType().Namespace, this.GetType().Name);
 
         [UIValue("modes")]
         private readonly List<object> _modes = new List<object>() { "InSide", "Normal" };
 
         /// <summary>説明 を取得、設定</summary>
-        private string currentMode_;
+        private string _currentMode;
         /// <summary>説明 を取得、設定</summary>
         [UIValue("current-mode")]
         public string CurrentMode
         {
-            get => this.currentMode_;
+            get => this._currentMode;
 
-            set
-            {
-                this.currentMode_ = value;
-                this.NotifyPropertyChanged();
-            }
+            set => this.SetProperty(ref this._currentMode, value);
         }
 
+        /// <summary>説明 を取得、設定</summary>
+        private int _scaleValue;
+        /// <summary>説明 を取得、設定</summary>
         [UIValue("scale-value")]
         public int ScaleValue
         {
-            get => PluginConfig.Instance.Scale;
-            set => PluginConfig.Instance.Scale = value;
+            get => this._scaleValue;
+
+            set => this.SetProperty(ref this._scaleValue, value);
         }
 
+        /// <summary>説明 を取得、設定</summary>
+        private float _gravityValue;
+        /// <summary>説明 を取得、設定</summary>
         [UIValue("gravity-value")]
         public float GravityValue
         {
-            get => PluginConfig.Instance.GravityModifierMultiplier;
-            set => PluginConfig.Instance.GravityModifierMultiplier = value;
+            get => this._gravityValue;
+
+            set => this.SetProperty(ref this._gravityValue, value);
         }
+
+        /// <summary>説明 を取得、設定</summary>
+        private bool _fire;
+        /// <summary>説明 を取得、設定</summary>
         [UIValue("fire-enable")]
         public bool Fire
         {
-            get => PluginConfig.Instance.FireEnable;
-            set => PluginConfig.Instance.FireEnable = value;
+            get => this._fire;
+
+            set => this.SetProperty(ref this._fire, value);
         }
+
+        /// <summary>説明 を取得、設定</summary>
+        private bool _traile;
+        /// <summary>説明 を取得、設定</summary>
         [UIValue("traile-enable")]
         public bool Traile
         {
-            get => PluginConfig.Instance.TraileEnable;
-            set => PluginConfig.Instance.TraileEnable = value;
+            get => this._traile;
+
+            set => this.SetProperty(ref this._traile, value);
         }
+
+        /// <summary>説明 を取得、設定</summary>
+        private bool _refrect;
+        /// <summary>説明 を取得、設定</summary>
         [UIValue("refrect-enable")]
         public bool Refrect
         {
-            get => PluginConfig.Instance.Refrect;
-            set => PluginConfig.Instance.Refrect = value;
+            get => this._refrect;
+
+            set => this.SetProperty(ref this._refrect, value);
         }
+
+        /// <summary>説明 を取得、設定</summary>
+        private float _radial;
+        /// <summary>説明 を取得、設定</summary>
         [UIValue("radial")]
         public float Radial
         {
-            get => PluginConfig.Instance.Radial;
-            set => PluginConfig.Instance.Radial = value;
+            get => this._radial;
+
+            set => this.SetProperty(ref this._radial, value);
         }
+
+        /// <summary>説明 を取得、設定</summary>
+        private string _soundSet;
+        /// <summary>説明 を取得、設定</summary>
         [UIValue("sound-set")]
         public string SoundSet
         {
-            get => PluginConfig.Instance.SoundSet;
-            set => PluginConfig.Instance.SoundSet = value;
+            get => this._soundSet;
+
+            set => this.SetProperty(ref this._soundSet, value);
         }
 
         [UIValue("sounds")]
@@ -89,8 +127,93 @@ namespace UltimateFireworks.Views
         [UIComponent("sound-dropdown")]
         private readonly object _dropDownObject;
         private SimpleTextDropdown _simpleTextDropdown;
-        [Inject]
-        private readonly ISoundLoader _soundLoader;
+        #endregion
+        //ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*
+        #region // コマンド
+        #endregion
+        //ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*
+        #region // コマンド用メソッド
+        #endregion
+        //ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*
+        #region // オーバーライドメソッド
+        #endregion
+        //ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*
+        #region // パブリックメソッド
+        public void Initialize()
+        {
+            BSMLSettings.instance.AddSettingsMenu("UltimateFireworks", this.ResourceName, this);
+            this.ApplyRealValue();
+        }
+        #endregion
+        //ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*
+        #region // プライベートメソッド
+        private void LoadValue()
+        {
+            this.ScaleValue = PluginConfig.Instance.Scale;
+            this.GravityValue = PluginConfig.Instance.GravityModifierMultiplier;
+            this.Fire = PluginConfig.Instance.FireEnable;
+            this.Traile = PluginConfig.Instance.TraileEnable;
+            this.Refrect = PluginConfig.Instance.Refrect;
+            this.Radial = PluginConfig.Instance.Radial;
+            this.SoundSet = PluginConfig.Instance.SoundSet;
+            switch (PluginConfig.Instance.Mode) {
+                case PluginConfig.FireWorksMode.Normal:
+                    this.CurrentMode = this._modes[1].ToString();
+                    break;
+                case PluginConfig.FireWorksMode.InSide:
+                    this.CurrentMode = this._modes[0].ToString();
+                    break;
+                default:
+                    this.CurrentMode = this._modes[0].ToString();
+                    break;
+            }
+        }
+
+        private void ApplyAllValue()
+        {
+            PluginConfig.Instance.Scale = this.ScaleValue;
+            PluginConfig.Instance.GravityModifierMultiplier = this.GravityValue;
+            PluginConfig.Instance.FireEnable = this.Fire;
+            PluginConfig.Instance.TraileEnable = this.Traile;
+            PluginConfig.Instance.Refrect = this.Refrect;
+            PluginConfig.Instance.Radial = this.Radial;
+            PluginConfig.Instance.SoundSet = this.SoundSet;
+            if (this.CurrentMode == this._modes[0].ToString()) {
+                PluginConfig.Instance.Mode = PluginConfig.FireWorksMode.InSide;
+            }
+            else {
+                PluginConfig.Instance.Mode = PluginConfig.FireWorksMode.Normal;
+            }
+        }
+
+        private void ApplyPreviewValue()
+        {
+            FireworksItemControllerOverride.Scale = this.ScaleValue;
+            FireworksItemControllerOverride.GravityModifierMultiplier = this.GravityValue;
+            FireworksItemControllerOverride.FireEnable = this.Fire;
+            FireworksItemControllerOverride.TraileEnable = this.Traile;
+            FireworksItemControllerOverride.Refrect = this.Refrect;
+            FireworksItemControllerOverride.Radial = this.Radial;
+            this._ultimateFireworksController.SoundSet = this.SoundSet;
+            if (this.CurrentMode == this._modes[0].ToString()) {
+                this._ultimateFireworksController.Mode = PluginConfig.FireWorksMode.InSide;
+            }
+            else {
+                this._ultimateFireworksController.Mode = PluginConfig.FireWorksMode.Normal;
+            }
+        }
+
+        private void ApplyRealValue()
+        {
+            FireworksItemControllerOverride.Scale = PluginConfig.Instance.Scale;
+            FireworksItemControllerOverride.GravityModifierMultiplier = PluginConfig.Instance.GravityModifierMultiplier;
+            FireworksItemControllerOverride.FireEnable = PluginConfig.Instance.FireEnable;
+            FireworksItemControllerOverride.TraileEnable = PluginConfig.Instance.TraileEnable;
+            FireworksItemControllerOverride.Refrect = PluginConfig.Instance.Refrect;
+            FireworksItemControllerOverride.Radial = PluginConfig.Instance.Radial;
+            this._ultimateFireworksController.SoundSet = PluginConfig.Instance.SoundSet;
+            this._ultimateFireworksController.Mode = PluginConfig.Instance.Mode;
+        }
 
         private void Awake()
         {
@@ -107,10 +230,35 @@ namespace UltimateFireworks.Views
             }
         }
 
+        protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+        {
+            base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
+            this.ApplyRealValue();
+            this._ultimateFireworksController.enabled = false;
+        }
+
         [UIAction("#post-parse")]
         protected void PostParse()
         {
-            this.StartCoroutine(this.CreateList());
+            this.LoadValue();
+            MainThreadInvoker.Instance.Enqueue(this.CreateList());
+        }
+
+        [UIAction("#apply")]
+        protected void OnApply()
+        {
+            this.ApplyAllValue();
+            this.ApplyRealValue();
+            BSMLSettings.instance.RemoveSettingsMenu(this);
+            Destroy(this.gameObject);
+        }
+
+        [UIAction("preview-action")]
+        protected void Preview()
+        {
+            if (this._fireworksController) {
+                this._fireworksController.enabled = !this._fireworksController.enabled;
+            }
         }
 
         private IEnumerator CreateList()
@@ -153,28 +301,43 @@ namespace UltimateFireworks.Views
 
         protected override void OnDestroy()
         {
+            Plugin.Log.Debug("OnDestroy call");
             this._simpleTextDropdown.didSelectCellWithIdxEvent -= this.SimpleTextDropdown_didSelectCellWithIdxEvent;
             base.OnDestroy();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged([CallerMemberName] string name = null)
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string membberName = null)
         {
-            this.OnPropertyChanged(new PropertyChangedEventArgs(name));
+            if (EqualityComparer<T>.Default.Equals(field, value)) {
+                return false;
+            }
+            field = value;
+            this.OnPropertyChanged(new PropertyChangedEventArgs(membberName));
+            return true;
         }
 
         private void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(this.CurrentMode)) {
-                if (this.CurrentMode == this._modes[0].ToString()) {
-                    PluginConfig.Instance.Mode = PluginConfig.FireWorksMode.InSide;
-                }
-                else {
-                    PluginConfig.Instance.Mode = PluginConfig.FireWorksMode.Normal;
-                }
-            }
-            this.PropertyChanged?.Invoke(this, e);
+            this.NotifyPropertyChanged(e.PropertyName);
+            this.ApplyPreviewValue();
         }
+        #endregion
+        //ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*
+        #region // メンバ変数
+        private ISoundLoader _soundLoader;
+        private UltimateFireworksController _ultimateFireworksController;
+        private FireworksController _fireworksController;
+        #endregion
+        //ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*
+        #region // 構築・破棄
+        [Inject]
+        internal void Constractor(ISoundLoader soundLoader, UltimateFireworksController ultimateFireworksController, FireworksController fireworksController)
+        {
+            Plugin.Log.Debug("Constractor call");
+            this._soundLoader = soundLoader;
+            this._ultimateFireworksController = ultimateFireworksController;
+            this._fireworksController = fireworksController;
+        }
+        #endregion
     }
 }

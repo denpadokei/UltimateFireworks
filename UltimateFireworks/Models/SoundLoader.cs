@@ -10,16 +10,16 @@ using Zenject;
 
 namespace UltimateFireworks.Models
 {
-    internal class SoundLoader : ISoundLoader, IInitializable
+    internal class SoundLoader : MonoBehaviour, ISoundLoader
     {
         public ConcurrentDictionary<string, AudioClip[]> Sounds { get; set; } = new ConcurrentDictionary<string, AudioClip[]>();
         public bool IsLoading { get; private set; } = false;
         private readonly string s_dataPath = Path.Combine(Environment.CurrentDirectory, "UserData", "UltimateFireworks", "Sound");
         public string DataPath => this.s_dataPath;
 
-        public void Initialize()
+        public void Awake()
         {
-            HMMainThreadDispatcher.instance.Enqueue(this.LoadSounds());
+            this.StartCoroutine(this.LoadSounds());
         }
 
         private IEnumerator LoadSounds()
