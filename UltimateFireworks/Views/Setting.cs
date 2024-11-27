@@ -20,7 +20,7 @@ using Zenject;
 namespace UltimateFireworks.Views
 {
     [HotReload]
-    internal class Setting : BSMLAutomaticViewController, IInitializable
+    internal class Setting : BSMLAutomaticViewController, IInitializable, IDisposable
     {
         //ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ﾟ+｡*
         #region // プロパティ
@@ -141,7 +141,7 @@ namespace UltimateFireworks.Views
         #region // パブリックメソッド
         public void Initialize()
         {
-            BSMLSettings.instance.AddSettingsMenu("UltimateFireworks", this.ResourceName, this);
+            BSMLSettings.Instance.AddSettingsMenu("UltimateFireworks", this.ResourceName, this);
             this.ApplyRealValue();
         }
         #endregion
@@ -249,8 +249,6 @@ namespace UltimateFireworks.Views
         {
             this.ApplyAllValue();
             this.ApplyRealValue();
-            BSMLSettings.instance.RemoveSettingsMenu(this);
-            Destroy(this.gameObject);
         }
 
         [UIAction("preview-action")]
@@ -337,6 +335,11 @@ namespace UltimateFireworks.Views
             this._soundLoader = soundLoader;
             this._ultimateFireworksController = ultimateFireworksController;
             this._fireworksController = fireworksController;
+        }
+
+        public void Dispose()
+        {
+            BSMLSettings.Instance.RemoveSettingsMenu(this);
         }
         #endregion
     }
